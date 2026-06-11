@@ -1,5 +1,7 @@
 # 🏉 Rugby Train Creator
 
+https://giog97.github.io/app-rugbytraincreator/
+
 App per **creare allenamenti di rugby da zero** per categorie **U16–U18**.
 Ogni seduta ha un **tema** (attacco, difesa, contrattacco, touche, mischia, ruck, maul, kicking…), segue una **struttura di fasi configurabile** e punta sempre a **1h30 (90 minuti)** totali.
 
