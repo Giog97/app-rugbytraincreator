@@ -1,15 +1,19 @@
-/* Service worker: cache dell'app shell per uso offline.
+﻿/* Service worker: cache dell'app shell per uso offline.
    I dati (esercizi, sedute) stanno in IndexedDB, non qui. */
-var CACHE = 'rugbytrain-v2';
+var CACHE = 'rugbytrain-v7';
 var ASSETS = [
   '.',
   'index.html',
   'manifest.webmanifest',
-  'css/styles.css',
-  'js/config.js',
-  'js/db.js',
-  'js/catalog.js',
-  'js/app.js',
+  'css/styles.css?v=7',
+  'js/vendor/jspdf.umd.min.js',
+  'js/config.js?v=7',
+  'js/db.js?v=7',
+  'js/catalog.js?v=7',
+  'js/plays.js?v=7',
+  'js/tips.js?v=7',
+  'js/pdf.js?v=7',
+  'js/app.js?v=7',
   'icons/icon-192.png',
   'icons/icon-512.png',
   'icons/icon-maskable-512.png'
@@ -17,7 +21,15 @@ var ASSETS = [
 
 self.addEventListener('install', function (e) {
   e.waitUntil(
-    caches.open(CACHE).then(function (c) { return c.addAll(ASSETS); }).then(function () { return self.skipWaiting(); })
+    caches.open(CACHE).then(function (c) {
+      // cache:'reload' bypassa la cache HTTP del browser: in cache va la versione fresca dal server
+      return Promise.all(ASSETS.map(function (u) {
+        return fetch(new Request(u, { cache: 'reload' })).then(function (res) {
+          if (!res || res.status !== 200) throw new Error('asset ' + u);
+          return c.put(u, res);
+        });
+      }));
+    }).then(function () { return self.skipWaiting(); })
   );
 });
 

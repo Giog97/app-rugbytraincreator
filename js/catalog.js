@@ -8,6 +8,8 @@
 window.RUGBY = window.RUGBY || {};
 
 function _ex(o) { o.origine = 'catalogo'; o.immagine = 'assets/schemes/' + o.id + '.svg'; return o; }
+/* Esercizi estratti dagli appunti del corso dell'allenatore */
+function _app(o) { o = _ex(o); o.fonte = 'appunti'; return o; }
 
 RUGBY.CATALOG = [
   /* ===================== ATTIVAZIONE / RISCALDAMENTO ===================== */
@@ -388,5 +390,222 @@ RUGBY.CATALOG = [
     durata: 5, giocatori: 'Tutta la squadra', materiale: 'Tappetini (facoltativi)',
     spazio: 'Libero', varianti: 'Core a coppie; mobilità guidata; respirazione finale prolungata.',
     coaching: 'Controllo e respirazione; qualità più che quantità; idratazione.'
+  }),
+
+  /* ============================================================
+     ESERCIZI DAGLI APPUNTI DEL CORSO (Super Corso CRT + note dal campo)
+     fonte: 'appunti' -> mostrati con il badge "Dai tuoi appunti"
+  ============================================================ */
+  _app({
+    id: 'app-att-pi',
+    titolo: 'Attivazione al punto d’incontro (P-D-S)',
+    tema: 'ruck', fase: 'attivazione',
+    obiettivo: 'Preparare il contatto e la ruck in progressione e a bassa intensità.',
+    descrizione: 'A terne con ruoli codificati: Portatore, Difensore, Sostegno. Si parte tutti e tre in ginocchio, a livello medio-basso: il portatore va al contatto, il difensore lo contrasta, il sostegno interviene e ripulisce (cleaning). Rotazione continua dei ruoli a ogni ripetizione, alzando gradualmente livello e intensità.',
+    durata: 10, giocatori: 'A terne', materiale: '1 pallone ogni 3',
+    spazio: '10x10 m per terna', varianti: 'Partenza in piedi a bassa intensità; aggiungere un secondo sostegno; mini-sfida sul recupero.',
+    coaching: 'Livello basso e schiena piatta; il contatto si prepara in progressione; ruotare i ruoli così tutti vivono P, D e S.'
+  }),
+  _app({
+    id: 'app-att-ondate',
+    titolo: 'Attacco davanti, difesa in superiorità: 2v1 + 3v2 + 5v3',
+    tema: 'attacco', fase: 'reparto',
+    obiettivo: 'Sfruttare superiorità numeriche crescenti con difensori che si riciclano.',
+    descrizione: 'Esercizio per 8 ragazzi su campo a canali (~22 m di larghezza, profondità 5+15 m). I due attaccanti partono dai due pali e giocano il 2v1. Dopo, il primo difensore diventa attaccante e si gioca in 3v2. Dopo, anche i due difensori del 3v2 diventano attaccanti e si gioca il 5v3. Le ondate sono continue: chi difende rientra nell’onda successiva.',
+    durata: 15, giocatori: '8', materiale: 'Coni/pali, palloni, casacche',
+    spazio: '~22x20 m a canali', varianti: 'Cambiare i rapporti numerici; un giro in più per chi segna; vincolo di passaggi minimi.',
+    coaching: 'Correre dritto per fissare; decidere in base al difensore reale, non a memoria; riorganizzarsi subito per l’onda successiva.'
+  }),
+  _app({
+    id: 'app-tec-pass-pressione',
+    titolo: 'Passaggio sotto pressione nel corridoio',
+    tema: 'skill', fase: 'tecnica',
+    obiettivo: 'Passare con qualità leggendo i difensori, senza farsi toccare.',
+    descrizione: 'Corridoio con linea di meta. Il portatore ha 2 difensori vicini: uno dietro e uno davanti, entrambi leggermente spostati verso l’interno del campo in modo da lasciare liberi i tre corridoi davanti al portatore. L’azione la decide il portatore, che parte palla in mano quando vuole: deve scegliere il corridoio e il momento del passaggio per mandare in meta il compagno. Obiettivo: fare meta senza essere toccati.',
+    durata: 12, giocatori: '4-6 per corridoio', materiale: 'Coni, palloni',
+    spazio: 'Corridoio 10-15 m', varianti: 'Evoluzione: aggiungere un secondo difensore per alzare la difficoltà; modulare la distanza tra i difensori che intervengono.',
+    coaching: 'Partenza con la palla in asse; leggere il primo difensore; il timing del passaggio decide tutto.'
+  }),
+  _app({
+    id: 'app-sit-salita-vlp',
+    titolo: 'Attacco con palla verde-gialla-rossa',
+    tema: 'attacco', fase: 'situazione',
+    obiettivo: 'Leggere la velocità di uscita del pallone dal punto d’incontro e attaccare di conseguenza.',
+    descrizione: 'Esercizio “da Michele Cardinale”: giocano 4 difensori contro 6 attaccanti. L’allenatore simula il punto d’incontro mostrando un pallone colorato: VERDE = palla veloce, GIALLA = media, ROSSA = lenta. Gli attaccanti, schierati in linea, devono riconoscere il colore (non solo ascoltare la chiamata) e attaccare gli spazi sfruttando la velocità di uscita; i difensori si organizzano sul tempo concesso. Obiettivo: fare meta provando gli spazi e sfruttando la velocità di uscita del pallone.',
+    durata: 15, giocatori: '10 (6 attaccanti vs 4 difensori)', materiale: 'Palloni di 3 colori (o coni), casacche',
+    spazio: 'Metà larghezza campo', varianti: 'Anche l’allenatore si muove e cambia punto d’incontro; chiamate a sorpresa; punti per la lettura corretta.',
+    coaching: 'Riconoscere il colore prima di muoversi; palla verde = attacca subito, rossa = riorganizzati; testa alta sempre.'
+  }),
+  _app({
+    id: 'app-att-colori',
+    titolo: 'Chiamata a colori per i 3/4',
+    tema: 'skill', fase: 'attivazione',
+    obiettivo: 'Riconoscere uno stimolo e attaccare lo spazio nel minor tempo possibile.',
+    descrizione: 'Skill/handling per i 3/4. Canale con palloni colorati e un giocatore largo sullo spazio. Tre attaccanti partono in fila: l’allenatore chiama un colore (ROSSO o VERDE) e in che fila devono andare; il rispettivo ricevitore riconosce la chiamata e prende la palla prima che tocchi terra. Il giocatore largo si smarca e si fa passare la palla dal primo della fila.',
+    durata: 10, giocatori: '4-8', materiale: 'Palloni/coni di 2-3 colori',
+    spazio: 'Canale 15-20 m', varianti: 'Chiamare colore + numero; doppia chiamata; aggiungere un difensore passivo.',
+    coaching: 'Prima riconoscere, poi agire; comunicare con il largo; qualità del passaggio anche con fretta.'
+  }),
+  _app({
+    id: 'app-tec-tracking',
+    titolo: 'Tracking e placcaggio nel canale',
+    tema: 'difesa', fase: 'tecnica',
+    obiettivo: 'Accompagnare il portatore e mettersi in condizione di fare un placcaggio possibile.',
+    descrizione: 'Canale delimitato da coni: il portatore entra cambiando angolo e velocità, il difensore lavora il tracking (seguire il portatore restando in equilibrio, dall’interno verso l’esterno) e finalizza con un placcaggio controllato quando la situazione lo rende possibile. Progressione: camminata, corsa leggera, intensità crescente.',
+    durata: 12, giocatori: 'A coppie nel canale', materiale: 'Coni',
+    spazio: 'Canale 10x15 m', varianti: 'Doppio canale; portatore con finte libere; finire con contesa sul pallone.',
+    coaching: 'Si difende dall’interno verso l’esterno; controllare il ritmo di corsa; il tracking serve a rendere il placcaggio possibile.'
+  }),
+  _app({
+    id: 'app-rep-raddoppio',
+    titolo: 'Raddoppio del placcaggio sotto i 2 secondi',
+    tema: 'difesa', fase: 'reparto',
+    obiettivo: 'Raddoppiare il placcaggio con tempi rapidi: uomo e pallone.',
+    descrizione: 'Stazione breve e intensa: il portatore avanza, due difensori devono raddoppiare il placcaggio entro il tempo limite (sotto i 2 secondi) — il primo prende l’uomo, il secondo lavora sul pallone per strapparlo o rallentarne l’utilizzo.',
+    durata: 7, giocatori: 'A terne/quartetti in stazione', materiale: 'Palloni, eventuale scudo',
+    spazio: '10x10 m', varianti: 'Conteggio ad alta voce; punti per ogni pallone strappato; portatore con sostegno.',
+    coaching: 'Primo placcatore basso e dominante; il secondo va sul pallone; massimo 2 giocatori sul pallone.'
+  }),
+  _app({
+    id: 'app-tec-jackal',
+    titolo: '1v1 jackal sul pallone a terra',
+    tema: 'ruck', fase: 'tecnica',
+    obiettivo: 'Contendere il pallone a terra in modo rapido e legale.',
+    descrizione: 'Stazione 1 contro 1: portatore a terra con il pallone presentato, il difensore arriva e lavora il jackal (posizione bassa, appoggi solidi, mani sul pallone) mentre un sostegno d’attacco arriva a ripulire. Vince chi conquista o protegge il pallone. Rotazione continua.',
+    durata: 7, giocatori: 'A terne in stazione', materiale: 'Palloni',
+    spazio: '8x8 m', varianti: 'Sostegno in ritardo variabile; 2v1 sulla palla; partenze da posizioni diverse.',
+    coaching: 'Arrivare prima del sostegno; posizione bassa e legale (restare sui propri appoggi); decidere subito: contesa o riorganizzarsi.'
+  }),
+  _app({
+    id: 'app-tec-canali-portatore',
+    titolo: 'Canali del portatore: dentro, fuori, debordo',
+    tema: 'attacco', fase: 'tecnica',
+    obiettivo: 'Scegliere il giusto piano di contatto per non farsi prendere.',
+    descrizione: 'Tre corridoi affiancati, in ciascuno un difensore (passivo poi attivo). Il portatore affronta il difensore scegliendo il canale: DENTRO (attacca l’interno), FUORI (attacca l’esterno) o DEBORDO (lo aggira). L’obiettivo è la capacità di non farsi prendere scegliendo i giusti piani del contatto.',
+    durata: 12, giocatori: 'A coppie sui corridoi', materiale: 'Coni',
+    spazio: '3 corridoi da 5x12 m', varianti: 'Canale a chiamata; difensore che varia la salita; punto bonus se il portatore resta in piedi.',
+    coaching: 'Guardare il difensore, non il canale; cambio di ritmo sul punto debole; proteggere il pallone nel contatto.'
+  }),
+  _app({
+    id: 'app-rep-trezone',
+    titolo: 'Tre zone: profondità e angoli di corsa',
+    tema: 'attacco', fase: 'reparto',
+    obiettivo: 'Scegliere dove attaccare e regolare profondità e angolo di ricezione.',
+    descrizione: 'Tre zone affiancate (1 rossa, 2 gialla, 3 verde) con difensori in cima. La palla parte dalla fonte (ruck/mischia simulata): la linea d’attacco decide quale zona attaccare e di conseguenza quanto stare profonda e con quale angolo correre a ricevere. L’idea guida: “dove voglio attaccare, quindi quanto devo stare profondo”.',
+    durata: 15, giocatori: '6-10', materiale: 'Coni di 3 colori, palloni',
+    spazio: '30x20 m', varianti: 'Zona a chiamata dell’allenatore o del 10; difensori attivi; vincolo di attaccare zone diverse in sequenza.',
+    coaching: 'Prima la decisione, poi la corsa; profondità = tempo per accelerare; ricevere lanciati, mai da fermi.'
+  }),
+  _app({
+    id: 'app-sit-mischia-3pos',
+    titolo: 'Difesa da mischia su 3 posizioni: frattura e pendolo',
+    tema: 'difesa', fase: 'situazione',
+    obiettivo: 'Difendere la prima fase da mischia gestendo frattura e spazio largo.',
+    descrizione: 'Lavoro di reparto (~25’): mischia in 3 zone di campo diverse (sinistra, centro, destra) per variare gli spazi da difendere. L’attacco lancia il gioco con 3 giocatori di mischia + il 9 e i trasporti; la difesa cura il collegamento tra mischia e linea (la frattura) e la copertura larga con il pendolo (estremo e ali a triangolo allargato). L’allenatore alterna le consegne di lancio (A/B/C) per stimolare la lettura.',
+    durata: 25, giocatori: '12-18 divisi in 2 gruppi omogenei', materiale: 'Palloni, casacche',
+    spazio: 'Metà campo', varianti: 'Prima 2 canali di linea per lavorare la frattura, poi inserire gli altri (by-step); stessa logica da touche (zona 1, 2, 3).',
+    coaching: 'Chiudere la frattura velocemente; riferimenti semplici; il pendolo copre il largo e il profondo; comunicazione costante.'
+  }),
+  _app({
+    id: 'app-tec-tipi-calcio',
+    titolo: 'Tipi di calcio: grubber, chip, punt e spiral',
+    tema: 'kicking', fase: 'tecnica',
+    obiettivo: 'Padroneggiare i diversi calci tattici e scegliere quello giusto.',
+    descrizione: 'Stazioni tecniche sui calci: GRUBBER (palla leggermente inclinata indietro, colpire la parte alta, palla rasoterra), CHIP (palla verticale, colpire la punta, a scavalcare il difensore), PUNT (palla rilasciata sull’asse della gamba) e SPIRAL (palla rilasciata all’esterno del ginocchio, testa ferma, gamba estesa in linea col bersaglio). Chiudere con presa al volo, raccolta e stop del pallone con il piede.',
+    durata: 15, giocatori: 'A coppie/terne', materiale: 'Palloni, coni bersaglio',
+    spazio: 'Metà campo', varianti: 'Bersagli a punti; calcio dopo passaggio; sotto pressione leggera di un difensore.',
+    coaching: 'Palla in due mani sotto la vita; occhi sul pallone e testa ferma; estensione completa verso il bersaglio; segui il calcio (kick-chase).'
+  }),
+  _app({
+    id: 'app-tec-prop-mischia',
+    titolo: 'Propedeutica della mischia: da 1v1 alla mischia ordinata',
+    tema: 'mischia', fase: 'tecnica',
+    obiettivo: 'Apprendere posizione, legature e spinta in un percorso graduale e sicuro.',
+    descrizione: 'Progressione: 1v1 (postura, ingaggio sicuro, spinta), poi 1+1 v 1+1 e 2v2 curando le legature, aggiungendo giocatori per gradi fino alla mischia ordinata completa con sequenza di costruzione (tallonatore → piloni → seconde → terze → n.8) e ingaggio a comando. Adattare il numero di giocatori all’età e al vissuto.',
+    durata: 15, giocatori: 'Dal 1v1 al pacchetto completo', materiale: 'Eventuale macchina/scudi',
+    spazio: 'Zona dedicata', varianti: 'Solo prima linea; mischia a 5; lavorare la respirazione su “basso-lega-via”.',
+    coaching: 'Schiena dritta e angoli corretti (gamba-coscia ~90-100°); legature solide; peso sulle punte; prevenire = posizione corretta prima dell’intensità.'
+  }),
+  _app({
+    id: 'app-rep-breakdown3s',
+    titolo: 'Breakdown veloce: palla giocabile sotto i 3 secondi',
+    tema: 'ruck', fase: 'reparto',
+    obiettivo: 'Velocizzare il punto d’incontro: contatto, pulizia e utilizzo rapidissimi.',
+    descrizione: 'Dispositivo continuo: 1 portatore contro 1 placcatore, con recupero e sostegni che arrivano a ripulire. La regola guida (dagli appunti al Benetton): l’attacco deve rendere la palla giocabile sotto i 3 secondi; la difesa prova a tenerla ferma oltre. La pulizia va fatta quando i giocatori sono ancora in piedi. Inserire sempre competizione.',
+    durata: 15, giocatori: '6-10 per dispositivo', materiale: 'Palloni, casacche',
+    spazio: '15x15 m', varianti: 'Cronometrare ogni ruck ad alta voce; punti alla difesa se supera i 3 secondi; aggiungere il jackal.',
+    coaching: 'Tutto parte dal portatore: se lavora bene servono meno sostegni; sostegni pochi ma efficaci; la velocità di pulizia fa la differenza.'
+  }),
+
+  /* ---- dalla cartella "spunti allenamenti da sistemare" ---- */
+  _app({
+    id: 'app-sit-3v2p1-colori',
+    titolo: 'Riconoscere la situazione: 3v2+1 a colori',
+    tema: 'attacco', fase: 'situazione',
+    obiettivo: 'Riconoscere dove si apre lo spazio e attaccarlo prima che la difesa si ricomponga.',
+    descrizione: 'Esercizio per 6 ragazzi. Gli attaccanti si passano il pallone; i difensori hanno un colore ciascuno. Al via, l’allenatore chiama uno dei colori: quel difensore deve correre a toccare il cuscino/cono dietro di sé prima di rientrare in gioco. Gli attaccanti devono spostare la palla nello spazio lasciato libero e giocare il 3v2+1 prima che il difensore rientri.',
+    durata: 12, giocatori: '6', materiale: 'Coni/cuscini, casacche colorate, 1 pallone',
+    spazio: '~15x20 m', varianti: 'Due colori chiamati in sequenza; il difensore rientra da posizioni diverse; limite di tempo per segnare.',
+    coaching: 'Riconoscere la situazione e DOVE è lo spazio; palla veloce verso il lato debole; attaccare prima del rientro.'
+  }),
+  _app({
+    id: 'app-rep-ruck-scelta',
+    titolo: 'Ruck d’incontro: la scelta del sostegno',
+    tema: 'ruck', fase: 'reparto',
+    obiettivo: 'Insegnare al primo sostegno a leggere il portatore e scegliere la corsa giusta.',
+    descrizione: 'Esercizio per 4 ragazzi in un campo 5x5: palla a terra di lato al gruppo, l’allenatore avvia con un passaggio e il portatore sfida il primo difensore. Il sostegno d’attacco legge: se il portatore è AVANZANTE va dritto e veloce sul pallone per giocarlo subito; se il portatore è BATTUTO dal placcaggio, gira più largo e profondo (sul cuscino lontano) per ricevere o ripulire in sicurezza. Il sostegno difensivo gira sempre sul primo cuscino.',
+    durata: 12, giocatori: '4 per dispositivo', materiale: 'Cuscini/coni, 1 pallone',
+    spazio: '5x5 m', varianti: 'Doppio sostegno; vietato comunicare a voce (solo lettura); aggiungere la contesa del difensore.',
+    coaching: 'Leggere il portatore, non seguire a memoria; avanzante = pallone subito; battuto = giro e profondità.'
+  }),
+  _app({
+    id: 'app-tec-portatore-grassi',
+    titolo: 'Lavoro del portatore (da Paolo Grassi)',
+    tema: 'attacco', fase: 'tecnica',
+    obiettivo: 'Curare la sfida 1v1 del portatore e la trasformazione in sostegno dopo il contatto.',
+    descrizione: 'Tre attaccanti si passano il pallone camminando. Al via dell’allenatore, chi ha la palla la passa e chi l’ha passata riceve il ritorno e sfida D1 per fare meta; il portatore placcato lascia la palla a terra, si rialza subito e fa il sostegno. Obiettivo: meta. Evoluzione: 6 attaccanti in fila che si passano la palla, 2 scudi sfalsati davanti e 4 difensori dietro; al via la palla va all’allenatore che la ridà a un attaccante: deve attaccare passando in mezzo agli scudi e poi giocare contro i difensori, con gli altri che seguono come sostegni.',
+    durata: 12, giocatori: '4-10', materiale: 'Scudi, palloni, coni',
+    spazio: '15x20 m', varianti: 'Variare l’angolo di sfida; difensori da semi-attivi ad attivi; vincolo di offload.',
+    coaching: 'Sfida decisa e dritta; dopo il placcaggio rialzarsi subito (palla viva); il sostegno arriva sempre.'
+  }),
+  _app({
+    id: 'app-att-10pass',
+    titolo: 'Gioco dei 10 passaggi',
+    tema: 'skill', fase: 'attivazione',
+    obiettivo: 'Attivare mani, smarcamento e comunicazione sotto pressione leggera.',
+    descrizione: 'Gioco di possesso: la squadra in attacco deve completare 10 passaggi consecutivi per fare punto, mentre gli avversari provano a intercettare (senza placcaggio). Si gioca anche a 3 squadre (G1 vs G2 vs G3) in turni da 3 minuti: chi perde palla esce, entra la squadra che aspettava. Variante: 5v3 con passaggi in tutte le direzioni.',
+    durata: 10, giocatori: '8-15', materiale: 'Casacche, 1 pallone',
+    spazio: '15x15 / 20x20 m', varianti: 'Passaggi solo in ritardo; limite di 2 secondi col pallone in mano; conteggio ad alta voce.',
+    coaching: 'Muoversi per dare sempre 2 opzioni al portatore; comunicare; mani pronte e passaggi tesi.'
+  }),
+  _app({
+    id: 'app-rep-vertice',
+    titolo: 'Vertice: sfida e continuità 2v1',
+    tema: 'attacco', fase: 'reparto',
+    obiettivo: 'Fissare il difensore al vertice e giocare il 2v1 con continuità.',
+    descrizione: 'Esercizio a vertice in serie da 3x4 minuti: il portatore attacca il cono-vertice, dove trova il difensore; lo fissa con la corsa e gioca il 2v1 con il compagno (push pass o spin). Dopo la prima sfida si continua l’azione (continuità) verso il secondo vertice. Rotazione continua dei ruoli.',
+    durata: 12, giocatori: '3-6 per dispositivo', materiale: 'Coni, palloni',
+    spazio: '15x15 m', varianti: 'Push pass obbligato; doppio vertice in sequenza; difensore da passivo ad attivo.',
+    coaching: 'Correre AL vertice, non verso il compagno; fissare prima di passare; sostegno alla giusta profondità.'
+  }),
+  _app({
+    id: 'app-tec-rombo-pi',
+    titolo: 'Rombo: placcaggio, recupero e punto d’incontro',
+    tema: 'difesa', fase: 'tecnica',
+    obiettivo: 'Allenare placcaggio e recupero in circuito, poi la lotta al punto d’incontro.',
+    descrizione: 'Circuito a rombo con 4 scudi ai vertici: si gira il rombo eseguendo a ogni vertice placcaggio + recupero (rialzarsi subito), in serie da 2-3 minuti. A seguire il lavoro si trasforma in punto d’incontro: 1+1 contro 1+1 (portatore con sostegno contro placcatore con contendente), serie da 5 minuti x4, propedeutica del placcaggio inclusa.',
+    durata: 15, giocatori: 'A gruppi di 4-8', materiale: '4 scudi, palloni',
+    spazio: '10x10 m', varianti: 'Cesto/cesting 1+1+1; senso di rotazione invertito; contesa libera sul pallone.',
+    coaching: 'Placcaggio basso e rialzata immediata; nel P.I. arriva primo chi vince; qualità anche con la fatica.'
+  }),
+  _app({
+    id: 'app-gioco-partita-dif',
+    titolo: 'Partita difensiva: intervento, muro e salita',
+    tema: 'difesa', fase: 'gioco',
+    obiettivo: 'Applicare in partita i tre momenti della difesa: intervento, muro, salita.',
+    descrizione: 'Partita condizionata con focus totale sulla difesa (es. difesa in superiorità: 9 contro 5+1): si lavora la qualità dell’intervento (placcaggio), la costruzione del muro dopo il punto d’incontro e la salita insieme. L’attacco gioca per muovere la difesa; la difesa viene premiata per recuperi, muri ricomposti e salite coordinate.',
+    durata: 15, giocatori: '12-18', materiale: 'Casacche, palloni',
+    spazio: 'Metà campo', varianti: 'Ridurre la superiorità difensiva fino alla parità; bonus per turnover; attacco con regole (es. solo gioco corto).',
+    coaching: 'Intervento + muro + salita come un’unica catena; parlare sempre; dopo ogni placcaggio ricomporsi subito.'
   })
 ];

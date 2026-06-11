@@ -1,7 +1,5 @@
 # 🏉 Rugby Train Creator
 
-https://giog97.github.io/app-rugbytraincreator/
-
 App per **creare allenamenti di rugby da zero** per categorie **U16–U18**.
 Ogni seduta ha un **tema** (attacco, difesa, contrattacco, touche, mischia, ruck, maul, kicking…), segue una **struttura di fasi configurabile** e punta sempre a **1h30 (90 minuti)** totali.
 
@@ -43,10 +41,13 @@ il pulsante **“Installa app”** dentro *Opzioni*.
 ## 🧭 Come funziona
 
 - **Home** – scorciatoie e riepilogo.
-- **Libreria** – tutti gli esercizi: quelli **del catalogo** (già pronti) + i **tuoi**. Filtra per tema/fase, cerca, apri il dettaglio, crea o modifica esercizi e **carica l'immagine** dello schema.
+- **Libreria** – tutti gli esercizi: quelli **del catalogo**, quelli **estratti dai tuoi appunti del corso** (badge 📓) e i **tuoi**. Filtra per tema/fase, cerca, apri il dettaglio, crea o modifica esercizi e **carica l'immagine** dello schema.
 - **Genera** – scegli il **tema**, regola i **minuti delle fasi** (più gioco o più tecnica) e crea una **bozza di seduta** già compilata, da modificare.
-- **Sedute** – le sedute salvate; aprile, modificale, **stampale o salvale in PDF** (pulsante Stampa).
-- **Opzioni** – **struttura delle fasi** (nomi, minuti, aggiungi/togli, “a tema”), **backup** (esporta/importa) e installazione.
+- **Gruppi/stazioni** – nella seduta ogni fase può essere **divisa in 2-6 gruppi in parallelo**: il tempo si divide automaticamente (es. 30 min ÷ 3 gruppi = 10 min a stazione, con rotazione). Su PC le stazioni sono **affiancate**, sul telefono **impilate**; la divisione compare anche nel PDF.
+- **Sedute** – le sedute salvate. **Salvando una seduta viene anche creato e scaricato il PDF completo** (per ogni esercizio: schema, materiale, obiettivo, descrizione, varianti e punti di coaching). Con **📤 Condividi** si apre il menu di condivisione del telefono (WhatsApp, mail…); sul PC il PDF viene scaricato.
+- **Giocate** – gli **schemi giocate** della squadra (dai playbook U16/U17), classificati per **3/4 o mischia**, con diagramma nei colori dei tuoi appunti, movimenti, quando usarle e punti chiave.
+- **Spunti** – il **riassunto del corso allenatori**: filosofia, seduta, intensità, comunicazione, difesa, attacco, gioco al piede, transizioni…
+- **Opzioni** (ingranaggio ⚙️ in alto) – **struttura delle fasi** (nomi, minuti, aggiungi/togli, “a tema”), **backup** (esporta/importa) e installazione.
 
 I **dati sono salvati solo su questo dispositivo** (IndexedDB del browser). Usa **Esporta dati** in *Opzioni* per fare un backup o spostarli altrove.
 
@@ -62,13 +63,32 @@ avvia.bat               avvio rapido su Windows
 css/styles.css          stile
 js/config.js            temi e fasi di default (modificabili)
 js/db.js                salvataggio dati (IndexedDB)
-js/catalog.js           catalogo esercizi preconfezionato
+js/catalog.js           catalogo esercizi (pronti + dai tuoi appunti)
+js/plays.js             schemi giocate (dai playbook U16/U17)
+js/tips.js              spunti per allenare (riassunto del corso)
+js/pdf.js               generazione PDF della seduta + condivisione
+js/vendor/jspdf.umd.min.js  libreria PDF (in locale, funziona offline)
 js/app.js               logica e schermate
 icons/                  icone dell'app
 assets/schemes/         schemi tattici degli esercizi (SVG)
+assets/plays/           diagrammi delle giocate (SVG)
 tools/generate_icons.py script che genera le icone
 tools/generate_schemes.py script che genera gli schemi tattici
+tools/generate_plays.py  script che genera i diagrammi delle giocate
+Appunti_super_corso_CRT_compressed.pdf  i tuoi appunti originali
 ```
+
+## 📓 Contenuti estratti dagli appunti del corso
+
+Dal PDF degli appunti (Super Corso CRT + note dal campo) sono stati estratti:
+
+- **14 esercizi** aggiunti al catalogo con il badge *📓 Dai tuoi appunti*;
+- **18 giocate** nella sezione *Giocate*, classificate **3/4** (13) e **mischia** (5),
+  ognuna con diagramma nei colori della tua legenda (verde=passaggio, rosa=corsa,
+  giallo=calcio, blu=3/4, viola=mischia, nero=difesa);
+- **13 schede** nella sezione *Spunti per allenare* con il riassunto del corso.
+
+Per rigenerare i diagrammi delle giocate: `python tools/generate_plays.py`.
 
 ## 🎽 Schemi tattici degli esercizi
 

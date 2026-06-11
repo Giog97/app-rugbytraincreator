@@ -447,6 +447,349 @@ def cooldown():
     return doc("".join(s))
 
 
+# ---------- schemi degli esercizi estratti dagli appunti del corso ----------
+def waves_attack():
+    """Attacco a ondate su 3 canali: 2v1 -> 3v2 -> 5v3 (8 ragazzi, i difensori si riciclano)."""
+    s = [vline(140, "#fff", 0.5, True), vline(260, "#fff", 0.5, True)]
+    conf = [("2v1", 2, 1), ("3v2", 3, 2), ("5v3", 5, 3)]
+    xs = [(20, 140), (140, 260), (260, 380)]
+    for i, (x0, x1) in enumerate(xs):
+        cx = (x0 + x1) / 2
+        lab, na, nd = conf[i]
+        s.append(label(cx, 30, lab, 11, "#fff", "middle"))
+        step_a = min(26, 96 // max(1, na - 1)) if na > 1 else 0
+        for j in range(na):
+            s.append(player(cx - step_a * (na - 1) / 2 + step_a * j, 170, "A"))
+        for j in range(nd):
+            s.append(player(cx - 26 * (nd - 1) / 2 + 26 * j, 80, "B"))
+        s.append(arrow(cx - 18, 158, cx - 14, 110, "run"))
+        s.append(arrow(cx - 8, 166, cx + 14, 162, "pass"))
+    s.append(ball(50, 170))
+    return doc("".join(s))
+
+
+def pi_activation():
+    """Attivazione punto d'incontro a terne P-D-S, partenza in ginocchio."""
+    s = []
+    for gx in (105, 295):
+        s.append(player(gx - 28, 130, "A", "P"))
+        s.append(ball(gx - 40, 130))
+        s.append(player(gx + 6, 112, "B", "D"))
+        s.append(player(gx - 36, 168, "A", "S"))
+        s.append(arrow(gx - 22, 122, gx - 4, 116, "run"))
+        s.append(arrow(gx - 30, 158, gx - 6, 128, "run"))
+        s.append('<path d="M%s,%s a14,7 0 1,0 0.1,0" fill="none" stroke="#fff" stroke-width="1.4" stroke-dasharray="3 3"/>' % (nf(gx - 14), nf(126)))
+    s.append(label(200, 36, "Terne P-D-S: rotazione dei ruoli, partenza in ginocchio", 10, "#fff", "middle"))
+    return doc("".join(s))
+
+
+def pass_pressure():
+    """Passaggio sotto pressione nel corridoio."""
+    s = [vline(120, "#fff", 0.6), vline(330, "#fff", 0.6)]
+    s.append(label(108, 110, "META", 8.5, "#fff", "middle"))
+    s.append('<rect x="112" y="14" width="6" height="186" fill="#fff" opacity="0.25"/>')
+    s.append(player(190, 150, "A")); s.append(ball(178, 150))
+    s.append(player(232, 96, "B")); s.append(arrow(232, 108, 214, 134, "run"))
+    s.append(player(262, 170, "B")); s.append(arrow(252, 164, 214, 156, "run"))
+    s.append(player(282, 120, "A"))
+    s.append(arrow(196, 142, 272, 122, "pass"))
+    s.append(arrow(282, 110, 250, 70, "run"))
+    s.append(label(200, 36, "Passare prima della pressione: leggere il 1° difensore", 10, "#fff", "middle"))
+    return doc("".join(s))
+
+
+def def_speed_choice():
+    """Attacco con palla verde-gialla-rossa: l'allenatore simula la velocità del P.I."""
+    s = []
+    # allenatore con i 3 palloni colorati (verde=veloce, gialla=media, rossa=lenta)
+    s.append(player(60, 120, "C", "All."))
+    for i, col in enumerate(("#16a34a", "#f59e0b", "#dc2626")):
+        s.append('<ellipse cx="%s" cy="%s" rx="7" ry="5" fill="%s" stroke="#fff" stroke-width="1.2"/>' % (nf(88), nf(96 + i * 16), col))
+    s.append(label(120, 88, "verde=veloce", 7.5, "#fff", "start"))
+    s.append(label(120, 104, "gialla=media", 7.5, "#fff", "start"))
+    s.append(label(120, 120, "rossa=lenta", 7.5, "#fff", "start"))
+    for i, x in enumerate((150, 200, 250, 300)):
+        s.append(player(x, 70, "B"))
+    for i, x in enumerate((140, 180, 220, 260, 300, 340)):
+        s.append(player(x, 170, "A"))
+    s.append(arrow(150, 158, 196, 110, "run"))
+    s.append(arrow(190, 166, 246, 162, "pass"))
+    s.append(label(200, 36, "Leggi il colore del pallone: è la velocità di uscita dal P.I.", 9.5, "#fff", "middle"))
+    return doc("".join(s))
+
+
+def color_call():
+    """Chiamata a colori per i 3/4."""
+    s = []
+    cols = [("#dc2626", 150), ("#16a34a", 200), ("#2563eb", 250)]
+    for c, x in cols:
+        s.append('<circle cx="%s" cy="98" r="7" fill="%s" stroke="#fff" stroke-width="1.4"/>' % (nf(x), c))
+    for i, x in enumerate((120, 96, 72)):
+        s.append(player(x, 160, "A"))
+    s.append(arrow(132, 154, 188, 110, "run"))
+    s.append(player(330, 150, "A"))
+    s.append(arrow(206, 104, 318, 142, "pass"))
+    s.append(arrow(330, 138, 348, 110, "run"))
+    s.append(label(200, 36, "L'allenatore chiama il colore: riconosci, prendi, servi il largo", 9.5, "#fff", "middle"))
+    return doc("".join(s))
+
+
+def tracking_channel():
+    """Tracking e placcaggio nel canale."""
+    s = [vline(150, "#fff", 0.55), vline(250, "#fff", 0.55)]
+    for y in (50, 105, 160):
+        s.append(cone(150, y)); s.append(cone(250, y))
+    s.append(player(200, 60, "A")); s.append(ball(212, 60))
+    s.append('<path d="M200,72 q-18,22 0,44 q16,20 0,40" fill="none" stroke="#0f172a" stroke-width="3" marker-end="url(#ah)"/>')
+    s.append(player(200, 186, "B"))
+    s.append('<path d="M200,174 q-12,-16 2,-34" fill="none" stroke="#0f172a" stroke-width="3" marker-end="url(#ah)"/>')
+    s.append(label(200, 30, "Tracking nel canale: accompagna e scegli il momento", 10, "#fff", "middle"))
+    return doc("".join(s))
+
+
+def double_tackle():
+    """Raddoppio del placcaggio sotto i 2 secondi."""
+    s = []
+    s.append(player(200, 95, "A")); s.append(ball(213, 95))
+    s.append(player(150, 165, "B")); s.append(arrow(158, 156, 190, 110, "run"))
+    s.append(player(250, 165, "B")); s.append(arrow(242, 156, 210, 110, "run"))
+    s.append('<circle cx="305" cy="70' + '" r="20" fill="#0f172a" opacity="0.85"/>')
+    s.append('<text x="305" y="75" font-size="11" font-weight="700" fill="#fff" text-anchor="middle" font-family="system-ui,sans-serif">&lt;2s</text>')
+    s.append(label(200, 36, "Raddoppio: uomo e pallone, entro 2 secondi", 10.5, "#fff", "middle"))
+    return doc("".join(s))
+
+
+def jackal_1v1():
+    """1v1 jackal sul pallone a terra."""
+    s = []
+    s.append('<ellipse cx="200" cy="130" rx="16" ry="9" fill="%s" stroke="#fff" stroke-width="1.5"/>' % BLU)
+    s.append(ball(200, 118))
+    s.append(player(238, 104, "B"))
+    s.append(arrow(230, 112, 210, 120, "run"))
+    s.append(player(152, 160, "A"))
+    s.append(arrow(162, 152, 188, 132, "run"))
+    s.append(label(200, 36, "Jackal: mani sul pallone, posizione bassa e legale", 10.5, "#fff", "middle"))
+    return doc("".join(s))
+
+
+def carrier_lanes():
+    """Canali del portatore: dentro / fuori / debordo."""
+    s = [vline(140, "#fff", 0.5, True), vline(260, "#fff", 0.5, True)]
+    titles = ["DENTRO", "FUORI", "DEBORDO"]
+    for i, (x0, x1) in enumerate([(20, 140), (140, 260), (260, 380)]):
+        cx = (x0 + x1) / 2
+        s.append(player(cx, 80, "B"))
+        s.append(player(cx - 6, 170, "A"))
+        if i == 0:
+            s.append('<path d="M%s,160 q-16,-30 -4,-62" fill="none" stroke="#0f172a" stroke-width="3" marker-end="url(#ah)"/>' % nf(cx - 6))
+        elif i == 1:
+            s.append('<path d="M%s,160 q22,-30 14,-58" fill="none" stroke="#0f172a" stroke-width="3" marker-end="url(#ah)"/>' % nf(cx - 6))
+        else:
+            s.append('<path d="M%s,160 q40,-26 28,-78" fill="none" stroke="#0f172a" stroke-width="3" marker-end="url(#ah)"/>' % nf(cx - 6))
+        s.append(label(cx, 42, titles[i], 9.5, "#fff", "middle"))
+    return doc("".join(s))
+
+
+def three_zones():
+    """Tre zone: profondità e angoli di corsa."""
+    s = []
+    zones = [("#dc2626", 20, 140, "1"), ("#f59e0b", 140, 260, "2"), ("#16a34a", 260, 380, "3")]
+    for c, x0, x1, t in zones:
+        s.append('<rect x="%s" y="40" width="%s" height="50" fill="%s" opacity="0.28"/>' % (nf(x0), nf(x1 - x0), c))
+        s.append(label((x0 + x1) / 2, 70, t, 13, "#fff", "middle"))
+        s.append(player((x0 + x1) / 2, 52, "B"))
+    s.append('<path d="M40,140 L70,140 L55,118 Z" fill="#94a3b8" stroke="#fff" stroke-width="1.4"/>')
+    s.append(label(55, 158, "fonte", 8.5, "#fff", "middle"))
+    s.append(player(150, 175, "A")); s.append(ball(138, 175))
+    s.append(arrow(70, 136, 134, 168, "pass"))
+    s.append(arrow(158, 166, 196, 100, "run"))
+    s.append(label(200, 30, "Scegli DOVE attaccare: da lì profondità e angolo", 10, "#fff", "middle"))
+    return doc("".join(s))
+
+
+def scrum_def_zones():
+    """Difesa da mischia: frattura e pendolo su 3 posizioni."""
+    s = []
+    blu = [(60, 120), (60, 142), (76, 110), (76, 131), (76, 152), (92, 120), (92, 142)]
+    for x, y in blu:
+        s.append('<circle cx="%s" cy="%s" r="6" fill="%s" stroke="#fff" stroke-width="1.2"/>' % (nf(x), nf(y), BLU))
+    for x, y in [(108, 120), (108, 142), (124, 110), (124, 131), (124, 152), (140, 120), (140, 142)]:
+        s.append('<circle cx="%s" cy="%s" r="6" fill="%s" stroke="#fff" stroke-width="1.2"/>' % (nf(x), nf(y), ROSSO))
+    for x in (170, 215, 260, 305, 345):
+        s.append(player(x, 90, "B"))
+    s.append('<rect x="148" y="100" width="36" height="26" rx="6" fill="#fff" fill-opacity="0.16" stroke="#fff" stroke-dasharray="4 4"/>')
+    s.append(label(166, 142, "frattura", 8.5, "#fff", "middle"))
+    s.append(player(330, 170, "B", "15"))
+    s.append(arrow(318, 170, 250, 176, "run"))
+    s.append(arrow(342, 164, 368, 130, "run"))
+    s.append(label(330, 196, "pendolo", 8.5, "#fff", "middle"))
+    s.append(label(200, 30, "Chiudere la frattura, coprire il largo con il pendolo", 10, "#fff", "middle"))
+    return doc("".join(s), tint="#1d4ed8")
+
+
+def kick_types():
+    """Tipi di calcio: grubber, chip, punt, spiral."""
+    s = [player(80, 160, "A"), ball(80, 174)]
+    s.append('<path d="M92,172 q40,8 80,2 q30,-4 60,4" fill="none" stroke="#0f172a" stroke-width="3" stroke-dasharray="2 6" marker-end="url(#ah)"/>')
+    s.append(label(160, 196, "grubber", 8.5, "#fff", "middle"))
+    s.append(curve(92, 162, 190, 120, -34, "kick"))
+    s.append(label(165, 96, "chip", 8.5, "#fff", "middle"))
+    s.append(curve(92, 156, 310, 70, -64, "kick"))
+    s.append(label(300, 52, "punt / spiral", 8.5, "#fff", "middle"))
+    s.append(player(225, 130, "B"))
+    s.append(label(200, 30, "Scegliere il calcio giusto per lo spazio giusto", 10, "#fff", "middle"))
+    return doc("".join(s), kick=True)
+
+
+def scrum_progression():
+    """Propedeutica mischia: da 1v1 alla mischia ordinata."""
+    s = []
+    s.append(player(70, 100, "A")); s.append(player(98, 100, "B"))
+    s.append(label(84, 132, "1v1", 9, "#fff", "middle"))
+    for dx, dy in [(0, -12), (0, 12)]:
+        s.append(player(160 + dx, 100 + dy, "A")); s.append(player(192 + dx, 100 + dy, "B"))
+    s.append(label(176, 140, "2v2", 9, "#fff", "middle"))
+    blu = [(280, 86), (280, 104), (280, 122), (266, 95), (266, 113), (252, 86), (252, 104), (252, 122)]
+    ros = [(304, 86), (304, 104), (304, 122), (318, 95), (318, 113), (332, 86), (332, 104), (332, 122)]
+    for x, y in blu:
+        s.append('<circle cx="%s" cy="%s" r="5.4" fill="%s" stroke="#fff" stroke-width="1.1"/>' % (nf(x), nf(y), BLU))
+    for x, y in ros:
+        s.append('<circle cx="%s" cy="%s" r="5.4" fill="%s" stroke="#fff" stroke-width="1.1"/>' % (nf(x), nf(y), ROSSO))
+    s.append(label(292, 150, "mischia ordinata", 8.5, "#fff", "middle"))
+    s.append(arrow(112, 100, 140, 100, "run"))
+    s.append(arrow(212, 100, 238, 100, "run"))
+    s.append(label(200, 36, "Postura e legature: aggiungi giocatori per gradi", 10, "#fff", "middle"))
+    return doc("".join(s))
+
+
+def fast_breakdown():
+    """Breakdown veloce: portatore + placcatore + sostegni, < 3 secondi."""
+    s = []
+    s.append('<ellipse cx="190" cy="120" rx="16" ry="9" fill="%s" stroke="#fff" stroke-width="1.5"/>' % BLU)
+    s.append(ball(190, 120))
+    s.append(player(222, 106, "B"))
+    s.append(player(130, 156, "A")); s.append(arrow(140, 148, 174, 130, "run"))
+    s.append(player(140, 86, "A")); s.append(arrow(150, 92, 176, 108, "run"))
+    s.append('<circle cx="310" cy="70" r="20" fill="#0f172a" opacity="0.85"/>')
+    s.append('<text x="310" y="75" font-size="11" font-weight="700" fill="#fff" text-anchor="middle" font-family="system-ui,sans-serif">&lt;3s</text>')
+    s.append(label(200, 36, "Pulizia in piedi, pochi ma efficaci: palla sotto i 3 secondi", 9.5, "#fff", "middle"))
+    return doc("".join(s))
+
+
+def recognize_3v2p1():
+    """Riconoscere la situazione: 3v2+1 a colori (un difensore esce al richiamo)."""
+    s = []
+    s.append(player(70, 150, "A")); s.append(player(120, 165, "A")); s.append(player(170, 150, "A"))
+    s.append(ball(95, 158))
+    s.append(arrow(82, 150, 108, 160, "pass"))
+    cols = ["#dc2626", "#2563eb", "#16a34a"]
+    for i, x in enumerate((140, 210, 280)):
+        s.append('<circle cx="%s" cy="%s" r="9" fill="%s" stroke="#fff" stroke-width="1.6"/>' % (nf(x), nf(82), cols[i]))
+    s.append(cone(330, 50))
+    s.append('<path d="M218,74 q40,-26 100,-22" fill="none" stroke="#0f172a" stroke-width="2.6" stroke-dasharray="5 4" marker-end="url(#ah)"/>')
+    s.append(label(300, 92, "il chiamato tocca il cono", 8, "#fff", "middle"))
+    s.append(arrow(178, 142, 215, 102, "run"))
+    s.append(label(200, 30, "Al colore chiamato un difensore esce: attacca lo spazio (3v2+1)", 9, "#fff", "middle"))
+    return doc("".join(s))
+
+
+def ruck_support_choice():
+    """Ruck d'incontro: la scelta del sostegno (avanzante o battuto)."""
+    s = [zone(40, 60, 130, 120, "#ffffff", 0.08)]
+    s.append(player(105, 120, "A")); s.append(ball(118, 120))
+    s.append(player(105, 75, "B"))
+    s.append(arrow(105, 87, 105, 106, "run"))
+    s.append(player(60, 165, "A", "S"))
+    s.append(arrow(68, 156, 96, 132, "run"))
+    s.append(label(70, 188, "avanzante: vai sul pallone", 8, "#fff", "start"))
+    s.append(player(250, 120, "A")); s.append(ball(263, 120))
+    s.append(player(250, 78, "B"))
+    s.append('<ellipse cx="250" cy="112" rx="15" ry="8" fill="%s" stroke="#fff" stroke-width="1.2" opacity="0.7"/>' % BLU)
+    s.append(player(215, 168, "A", "S"))
+    s.append('<path d="M224,160 q36,4 52,-28" fill="none" stroke="#0f172a" stroke-width="3" marker-end="url(#ah)"/>')
+    s.append(cone(330, 150))
+    s.append(label(268, 190, "battuto: giro più largo", 8, "#fff", "start"))
+    s.append(label(200, 30, "Il sostegno legge il portatore e sceglie la corsa", 9.5, "#fff", "middle"))
+    return doc("".join(s))
+
+
+def carrier_grassi():
+    """Lavoro del portatore (da Paolo Grassi): passa e sfida il difensore."""
+    s = []
+    s.append(player(80, 150, "A")); s.append(player(130, 170, "A")); s.append(player(180, 150, "A"))
+    s.append(ball(105, 160))
+    s.append(arrow(92, 152, 118, 164, "pass"))
+    s.append(arrow(142, 164, 168, 154, "pass"))
+    s.append(arrow(186, 140, 230, 92, "run"))
+    s.append(player(245, 78, "B", "D1"))
+    s.append(vline(330, "#fff", 0.6))
+    s.append(label(345, 110, "META", 8.5, "#fff", "middle"))
+    s.append(arrow(258, 70, 312, 60, "run"))
+    s.append(label(200, 30, "Chi passa sfida subito D1; il placcato si rialza e sostiene", 9, "#fff", "middle"))
+    return doc("".join(s))
+
+
+def ten_passes():
+    """Gioco dei 10 passaggi."""
+    s = []
+    pos = [(110, 90), (170, 60), (250, 80), (300, 130), (240, 170), (150, 160)]
+    for i, (x, y) in enumerate(pos):
+        s.append(player(x, y, "A"))
+    s.append(player(195, 120, "B")); s.append(player(230, 125, "B"))
+    s.append(ball(122, 90))
+    s.append(arrow(122, 86, 158, 66, "pass"))
+    s.append(arrow(182, 62, 238, 76, "pass"))
+    s.append(arrow(258, 88, 292, 120, "pass"))
+    s.append('<circle cx="330" cy="60" r="20" fill="#0f172a" opacity="0.85"/>')
+    s.append('<text x="330" y="65" font-size="10" font-weight="700" fill="#fff" text-anchor="middle" font-family="system-ui,sans-serif">x10</text>')
+    s.append(label(200, 200, "10 passaggi consecutivi = punto (anche a 3 squadre)", 9.5, "#fff", "middle"))
+    return doc("".join(s))
+
+
+def vertex_2v1():
+    """Vertice: sfida e continuità 2v1."""
+    s = [cone(200, 110)]
+    s.append(player(120, 170, "A")); s.append(ball(133, 170))
+    s.append(player(170, 185, "A"))
+    s.append(arrow(128, 160, 188, 122, "run"))
+    s.append(arrow(208, 104, 252, 84, "run"))
+    s.append(player(280, 70, "B"))
+    s.append(arrow(182, 178, 240, 130, "run"))
+    s.append(arrow(254, 96, 268, 118, "pass"))
+    s.append(player(290, 130, "A"))
+    s.append(label(200, 36, "Attacca il vertice, fissa il difensore, gioca il 2v1", 10, "#fff", "middle"))
+    return doc("".join(s))
+
+
+def rombo_pi():
+    """Rombo: placcaggio e recupero con scudi + punto d'incontro."""
+    s = []
+    pts = [(200, 50), (290, 115), (200, 180), (110, 115)]
+    for i, (x, y) in enumerate(pts):
+        s.append(bag(x, y))
+    s.append('<path d="M200,62 L278,108" fill="none" stroke="#0f172a" stroke-width="2.4" marker-end="url(#ah)"/>')
+    s.append('<path d="M286,127 L212,172" fill="none" stroke="#0f172a" stroke-width="2.4" marker-end="url(#ah)"/>')
+    s.append('<path d="M188,172 L118,127" fill="none" stroke="#0f172a" stroke-width="2.4" marker-end="url(#ah)"/>')
+    s.append('<path d="M114,103 L188,58" fill="none" stroke="#0f172a" stroke-width="2.4" marker-end="url(#ah)"/>')
+    s.append(player(200, 115, "A")); s.append(ball(200, 103))
+    s.append(player(232, 130, "B"))
+    s.append(label(200, 205, "Giro del rombo: placcaggio e recupero, poi P.I. 1+1 vs 1+1", 9, "#fff", "middle"))
+    return doc("".join(s))
+
+
+def defensive_game():
+    """Partita difensiva: intervento, muro e salita."""
+    s = [vline(45), vline(355)]
+    for i, x in enumerate((120, 165, 210, 255, 300)):
+        s.append(player(x, 110, "B"))
+        s.append(arrow(x, 122, x, 142, "run"))
+    s.append(player(140, 180, "A")); s.append(ball(153, 180))
+    s.append(player(190, 188, "A")); s.append(player(245, 182, "A"))
+    s.append(label(212, 100, "muro + salita insieme", 8.5, "#fff", "middle"))
+    s.append(label(200, 36, "Partita a tema difesa: intervento, muro, salita", 10, "#fff", "middle"))
+    return doc("".join(s), tint="#1d4ed8")
+
+
 # ---------- mappatura id esercizio -> schema ----------
 SCHEMES = {
     "cat-att-quadrato": square_warmup,
@@ -486,6 +829,29 @@ SCHEMES = {
     "cat-gioco-touche-ripartenze": lambda: game_grid("#7c3aed", "Partita con ripartenze da touche"),
     "cat-def-mobilita": cooldown,
     "cat-def-core": cooldown,
+    # esercizi dagli appunti del corso
+    "app-att-ondate": waves_attack,
+    "app-att-pi": pi_activation,
+    "app-tec-pass-pressione": pass_pressure,
+    "app-sit-salita-vlp": def_speed_choice,
+    "app-att-colori": color_call,
+    "app-tec-tracking": tracking_channel,
+    "app-rep-raddoppio": double_tackle,
+    "app-tec-jackal": jackal_1v1,
+    "app-tec-canali-portatore": carrier_lanes,
+    "app-rep-trezone": three_zones,
+    "app-sit-mischia-3pos": scrum_def_zones,
+    "app-tec-tipi-calcio": kick_types,
+    "app-tec-prop-mischia": scrum_progression,
+    "app-rep-breakdown3s": fast_breakdown,
+    # esercizi dalla cartella "spunti allenamenti da sistemare"
+    "app-sit-3v2p1-colori": recognize_3v2p1,
+    "app-rep-ruck-scelta": ruck_support_choice,
+    "app-tec-portatore-grassi": carrier_grassi,
+    "app-att-10pass": ten_passes,
+    "app-rep-vertice": vertex_2v1,
+    "app-tec-rombo-pi": rombo_pi,
+    "app-gioco-partita-dif": defensive_game,
 }
 
 
