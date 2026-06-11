@@ -12,7 +12,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Rugby Train">
-  <link rel="stylesheet" href="css/styles.css?v=7">
+  <link rel="stylesheet" href="css/styles.css?v=10">
 </head>
 <body>
   <header class="app-header">
@@ -33,13 +33,13 @@
   <!-- script in ordine: vendor -> config -> db -> catalog -> plays -> tips -> pdf -> app
        (?v=N allineato alla versione cache del service worker: aggiornarli insieme) -->
   <script src="js/vendor/jspdf.umd.min.js"></script>
-  <script src="js/config.js?v=7"></script>
-  <script src="js/db.js?v=7"></script>
-  <script src="js/catalog.js?v=7"></script>
-  <script src="js/plays.js?v=7"></script>
-  <script src="js/tips.js?v=7"></script>
-  <script src="js/pdf.js?v=7"></script>
-  <script src="js/app.js?v=7"></script>
+  <script src="js/config.js?v=10"></script>
+  <script src="js/db.js?v=10"></script>
+  <script src="js/catalog.js?v=10"></script>
+  <script src="js/plays.js?v=10"></script>
+  <script src="js/tips.js?v=10"></script>
+  <script src="js/pdf.js?v=10"></script>
+  <script src="js/app.js?v=10"></script>
   <script>
     // Registrazione service worker (solo se servito via http/https, non file://)
     if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {

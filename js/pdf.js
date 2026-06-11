@@ -140,7 +140,8 @@ RUGBY.PDF = (function () {
       var nEx = entries.length;
       var temaNome = RUGBY.themeName(session.tema);
       doc.text(tx('Data: ' + fmtDate(session.data) + '   -   Tema: ' + temaNome +
-        '   -   Durata: ' + tot + ' min   -   Esercizi: ' + nEx), MARGIN, 26);
+        '   -   Durata: ' + tot + ' min   -   Esercizi: ' + nEx +
+        (session.ragazzi ? '   -   Ragazzi: ' + session.ragazzi : '')), MARGIN, 26);
       y = 42;
 
       /* ===== note seduta (se presenti) ===== */
@@ -151,6 +152,7 @@ RUGBY.PDF = (function () {
         ensure(16);
         var stz = stazioniDi(f);
         var gruppi = f.gruppi && f.gruppi > 1 ? f.gruppi : (stz.length > 1 ? stz.length : 1);
+        var rot = f.rotazione !== false; // default: stazioni in rotazione
         var perMin = gruppi > 1 ? Math.round((Number(f.minuti) || 0) / gruppi) : 0;
         var perEsatto = gruppi > 1 && (Number(f.minuti) || 0) % gruppi === 0;
 
@@ -164,15 +166,23 @@ RUGBY.PDF = (function () {
         doc.text(tx('FASE ' + (fi + 1) + ' - ' + (f.nome || '')), MARGIN + 6, y + 1);
         setText(VERDE);
         var minTxt = (Number(f.minuti) || 0) + ' min';
-        if (gruppi > 1) minTxt += ' - ' + gruppi + ' gruppi da ' + (perEsatto ? '' : '~') + perMin + "'";
+        if (gruppi > 1) {
+          minTxt += rot
+            ? ' - ' + gruppi + ' stazioni da ' + (perEsatto ? '' : '~') + perMin + "'"
+            : ' - ' + gruppi + ' gruppi in parallelo';
+        }
         doc.text(tx(minTxt), PAGE_W - MARGIN - 2, y + 1, { align: 'right' });
         y += 11;
 
         if (gruppi > 1) {
+          var lettere = [];
+          for (var li = 0; li < gruppi; li++) lettere.push(String.fromCharCode(65 + li));
           doc.setFont('helvetica', 'italic'); doc.setFontSize(8.5);
           setText(GRIGIO);
           ensure(5);
-          doc.text(tx('Squadra divisa in ' + gruppi + ' gruppi in parallelo, rotazione ogni ' + (perEsatto ? '' : '~') + perMin + ' minuti.'), MARGIN, y);
+          doc.text(tx(rot
+            ? 'I gruppi (' + lettere.join(', ') + ') ruotano su tutte le stazioni: ogni stazione dura ' + (perEsatto ? '' : '~') + perMin + ' minuti, tutti fanno tutti gli esercizi.'
+            : 'Gruppi in parallelo senza rotazione: ogni gruppo resta sul proprio lavoro per ' + (Number(f.minuti) || 0) + ' minuti.'), MARGIN, y);
           y += 6;
         }
 
@@ -186,14 +196,18 @@ RUGBY.PDF = (function () {
         }
 
         stz.forEach(function (arr, gi) {
-        // sottotitolo del gruppo/stazione
+        // sottotitolo della stazione (rotazione) o del gruppo (parallelo)
         if (gruppi > 1 && arr.length) {
           ensure(9);
-          setFill([233, 243, 238]);
-          doc.roundedRect(MARGIN, y - 4, 60, 7, 1.2, 1.2, 'F');
+          var subLbl = rot
+            ? 'STAZIONE ' + (gi + 1) + '  -  ' + (perEsatto ? '' : '~') + perMin + ' min'
+            : 'GRUPPO ' + String.fromCharCode(65 + gi) + '  -  ' + (Number(f.minuti) || 0) + ' min';
           doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5);
+          var subW = doc.getTextWidth(tx(subLbl)) + 6;
+          setFill([233, 243, 238]);
+          doc.roundedRect(MARGIN, y - 4, subW, 7, 1.2, 1.2, 'F');
           setText(VERDE);
-          doc.text(tx('GRUPPO ' + (gi + 1) + '  -  ' + (perEsatto ? '' : '~') + perMin + ' min'), MARGIN + 3, y + 1);
+          doc.text(tx(subLbl), MARGIN + 3, y + 1);
           y += 8;
         }
 
@@ -264,6 +278,20 @@ RUGBY.PDF = (function () {
             paragraph('Descrizione', ex.descrizione);
             paragraph('Varianti / progressioni', ex.varianti);
             paragraph('Punti di coaching', ex.coaching);
+
+            // nota sul numero di ragazzi: tutti devono essere coinvolti
+            if (session.ragazzi && RUGBY.fitGiocatori) {
+              var perN = gruppi > 1 ? Math.round(session.ragazzi / gruppi) : session.ragazzi;
+              var chi = gruppi > 1 ? perN + ' per gruppo' : perN + ' ragazzi';
+              var fitG = RUGBY.fitGiocatori(ex.giocatori, perN);
+              if (fitG && fitG.tipo === 'piu') {
+                paragraph('Nota giocatori (+' + fitG.diff + ')',
+                  'Disponibili ' + chi + ', l\'esercizio ne prevede max ' + fitG.range.max + ': coinvolgili tutti allargando il dispositivo (un canale o una stazione in piu\') oppure prevedi brevi rotazioni veloci - piu\' giocatori coinvolti = meno pause necessarie.');
+              } else if (fitG && fitG.tipo === 'meno') {
+                paragraph('Nota giocatori (-' + fitG.diff + ')',
+                  'Disponibili ' + chi + ', l\'esercizio ne prevede almeno ' + fitG.range.min + ': riduci spazi o numeri (es. un difensore in meno) per tenere tutti attivi.');
+              }
+            }
           }
 
           // separatore

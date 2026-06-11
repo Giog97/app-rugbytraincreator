@@ -1,19 +1,19 @@
 ﻿/* Service worker: cache dell'app shell per uso offline.
    I dati (esercizi, sedute) stanno in IndexedDB, non qui. */
-var CACHE = 'rugbytrain-v7';
+var CACHE = 'rugbytrain-v10';
 var ASSETS = [
   '.',
   'index.html',
   'manifest.webmanifest',
-  'css/styles.css?v=7',
+  'css/styles.css?v=10',
   'js/vendor/jspdf.umd.min.js',
-  'js/config.js?v=7',
-  'js/db.js?v=7',
-  'js/catalog.js?v=7',
-  'js/plays.js?v=7',
-  'js/tips.js?v=7',
-  'js/pdf.js?v=7',
-  'js/app.js?v=7',
+  'js/config.js?v=10',
+  'js/db.js?v=10',
+  'js/catalog.js?v=10',
+  'js/plays.js?v=10',
+  'js/tips.js?v=10',
+  'js/pdf.js?v=10',
+  'js/app.js?v=10',
   'icons/icon-192.png',
   'icons/icon-512.png',
   'icons/icon-maskable-512.png'

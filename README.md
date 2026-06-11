@@ -1,6 +1,6 @@
 # 🏉 Rugby Train Creator
 
-https://giog97.github.io/app-rugbytraincreator/
+**▶️ Provala subito:** <https://giog97.github.io/app-rugbytraincreator/>
 
 App per **creare allenamenti di rugby da zero** per categorie **U16–U18**.
 Ogni seduta ha un **tema** (attacco, difesa, contrattacco, touche, mischia, ruck, maul, kicking…), segue una **struttura di fasi configurabile** e punta sempre a **1h30 (90 minuti)** totali.
@@ -45,7 +45,7 @@ il pulsante **“Installa app”** dentro *Opzioni*.
 - **Home** – scorciatoie e riepilogo.
 - **Libreria** – tutti gli esercizi: quelli **del catalogo**, quelli **estratti dai tuoi appunti del corso** (badge 📓) e i **tuoi**. Filtra per tema/fase, cerca, apri il dettaglio, crea o modifica esercizi e **carica l'immagine** dello schema.
 - **Genera** – scegli il **tema**, regola i **minuti delle fasi** (più gioco o più tecnica) e crea una **bozza di seduta** già compilata, da modificare.
-- **Gruppi/stazioni** – nella seduta ogni fase può essere **divisa in 2-6 gruppi in parallelo**: il tempo si divide automaticamente (es. 30 min ÷ 3 gruppi = 10 min a stazione, con rotazione). Su PC le stazioni sono **affiancate**, sul telefono **impilate**; la divisione compare anche nel PDF.
+- **Gruppi/stazioni** – nella seduta ogni fase può essere **divisa in 2-6 gruppi**, in due modalità: **🔁 stazioni in rotazione** (es. 30 min ÷ 3 = 3 esercizi diversi da 10 min, i gruppi A-B-C girano su tutti — ideale coi numeri grandi per lavorare lo stesso tema) oppure **🧩 gruppi separati** (ognuno sul proprio lavoro per tutta la fase, es. avanti/trequarti). Su PC le stazioni sono **affiancate**, sul telefono **impilate**; la divisione compare anche nel PDF.
 - **Sedute** – le sedute salvate. **Salvando una seduta viene anche creato e scaricato il PDF completo** (per ogni esercizio: schema, materiale, obiettivo, descrizione, varianti e punti di coaching). Con **📤 Condividi** si apre il menu di condivisione del telefono (WhatsApp, mail…); sul PC il PDF viene scaricato.
 - **Giocate** – gli **schemi giocate** della squadra (dai playbook U16/U17), classificati per **3/4 o mischia**, con diagramma nei colori dei tuoi appunti, movimenti, quando usarle e punti chiave.
 - **Spunti** – il **riassunto del corso allenatori**: filosofia, seduta, intensità, comunicazione, difesa, attacco, gioco al piede, transizioni…

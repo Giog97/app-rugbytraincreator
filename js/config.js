@@ -28,9 +28,38 @@ RUGBY.DEFAULT_PHASES = [
   { id: 'tecnica',       nome: 'Tecnica individuale',             minuti: 15, tematica: false },
   { id: 'reparto',       nome: 'Skill di reparto / situazione',   minuti: 20, tematica: true  },
   { id: 'situazione',    nome: 'Situazione a tema',               minuti: 20, tematica: true  },
-  { id: 'gioco',         nome: 'Gioco applicato / partita',       minuti: 15, tematica: true  },
-  { id: 'defaticamento', nome: 'Defaticamento',                   minuti: 5,  tematica: false },
+  { id: 'gioco',         nome: 'Gioco applicato / partita',       minuti: 20, tematica: true  },
 ];
+
+/* ---- Numero giocatori: lettura del campo "giocatori" degli esercizi ----
+   Restituisce {min,max} se il testo indica un numero/intervallo preciso,
+   oppure null se l'esercizio è "flessibile" (tutta la squadra, a coppie,
+   per gruppo/dispositivo/corridoio: si adatta a qualsiasi numero). */
+RUGBY.parseGiocatori = function (txt) {
+  var s = String(txt || '').toLowerCase();
+  if (!s.trim()) return null;
+  if (/squadra|tutti|coppi|tern|gruppo|gruppi|dispositiv|corridoio|canale|stazion|piacere|vogliamo|quanti/.test(s)) return null;
+  var nums = s.match(/\d+/g);
+  if (!nums) return null;
+  var a = parseInt(nums[0], 10);
+  var b = nums.length > 1 ? parseInt(nums[1], 10) : a;
+  if (a > 40 || a < 2) return null;
+  var min = Math.min(a, b), max = Math.max(a, b);
+  if (max > 40) max = min;
+  return { min: min, max: max };
+};
+
+/* Confronta i ragazzi disponibili (n) con l'esercizio.
+   tipo: 'flex' (si adatta) | 'ok' (n nell'intervallo) | 'piu' | 'meno' */
+RUGBY.fitGiocatori = function (txt, n) {
+  n = Number(n) || 0;
+  if (n <= 0) return null;
+  var r = RUGBY.parseGiocatori(txt);
+  if (!r) return { tipo: 'flex' };
+  if (n >= r.min && n <= r.max) return { tipo: 'ok', range: r };
+  if (n > r.max) return { tipo: 'piu', diff: n - r.max, range: r };
+  return { tipo: 'meno', diff: r.min - n, range: r };
+};
 
 /* Helper di lookup */
 RUGBY.themeById = function (id) {

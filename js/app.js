@@ -79,7 +79,11 @@
     if (!f.gruppi || f.gruppi < 1) f.gruppi = f.stazioni.length || 1;
     while (f.stazioni.length < f.gruppi) f.stazioni.push([]);
     if (f.stazioni.length > f.gruppi) f.gruppi = f.stazioni.length;
+    /* rotazione=true (default): i gruppi girano su tutte le stazioni (circuito);
+       rotazione=false: ogni gruppo resta sul proprio lavoro (es. reparti separati) */
+    if (f.rotazione === undefined) f.rotazione = true;
   }
+  function grpLetter(i) { return String.fromCharCode(65 + i); } // A, B, C…
   function normalizeSession(s) {
     if (s && s.fasi) s.fasi.forEach(ensureStazioni);
     return s;
@@ -97,6 +101,51 @@
     if (g <= 1) return null;
     var per = m / g;
     return { val: Math.round(per), esatto: m % g === 0 };
+  }
+
+  /* ragazzi per gruppo (testo nella testata della stazione) */
+  function perRagazziText(f) {
+    var s = state.session;
+    var n = Number(s && s.ragazzi) || 0;
+    var g = f.gruppi || 1;
+    if (!n || g <= 1) return '';
+    return ' · ≈' + Math.round(n / g) + ' ragazzi';
+  }
+
+  /* Nota di coinvolgimento: confronta i ragazzi disponibili (per gruppo)
+     con quanti ne prevede l'esercizio. Tutti devono essere sempre coinvolti:
+     se ce ne sono di più/meno, suggerisce come adattare. */
+  function fitNoteContent(exId, fase) {
+    var s = state.session;
+    var n = Number(s && s.ragazzi) || 0;
+    if (!n) return { cls: '', text: '' };
+    var g = (fase && fase.gruppi) || 1;
+    var per = g > 1 ? Math.round(n / g) : n;
+    var ex = getExercise(exId);
+    if (!ex) return { cls: '', text: '' };
+    var f = RUGBY.fitGiocatori(ex.giocatori, per);
+    if (!f) return { cls: '', text: '' };
+    var chi = g > 1 ? per + ' per gruppo' : per + ' ragazzi';
+    if (f.tipo === 'flex') return { cls: 'ok', text: '👥 ok: si adatta ai tuoi ' + chi };
+    if (f.tipo === 'ok') return { cls: 'ok', text: '👥 ok per i tuoi ' + chi };
+    if (f.tipo === 'piu') return { cls: 'warn', text: '👥 Hai ' + chi + ', l’esercizio ne prevede max ' + f.range.max + ' (+' + f.diff + '): allarga il dispositivo (un canale/stazione in più) o prevedi brevi rotazioni — più coinvolti = meno pause necessarie.' };
+    return { cls: 'warn', text: '👥 Hai ' + chi + ', l’esercizio ne prevede almeno ' + f.range.min + ' (-' + f.diff + '): riduci spazi o numeri (es. un difensore in meno) per tenere tutti attivi.' };
+  }
+
+  /* aggiorna le note giocatori senza ridisegnare (per non perdere il focus) */
+  function updatePlayerFits() {
+    var s = state.session;
+    if (!s) return;
+    document.querySelectorAll('#view-root .fit-note').forEach(function (el) {
+      var fi = Number(el.getAttribute('data-f'));
+      var note = fitNoteContent(el.getAttribute('data-ex'), s.fasi[fi]);
+      el.className = 'fit-note ' + note.cls;
+      el.textContent = note.text;
+    });
+    document.querySelectorAll('#view-root .per-ragazzi').forEach(function (el) {
+      var fi = Number(el.getAttribute('data-f'));
+      el.textContent = perRagazziText(s.fasi[fi]);
+    });
   }
 
   function load() {
@@ -367,6 +416,7 @@
       tema: 'attacco',
       nome: '',
       data: todayISO(),
+      ragazzi: '',
       phases: state.phases.map(function (p) { return { id: p.id, nome: p.nome, minuti: p.minuti, tematica: p.tematica }; })
     };
   }
@@ -393,6 +443,8 @@
           fld('Nome seduta', '<input id="g-nome" value="' + esc(g.nome) + '" placeholder="Es. ' + esc(RUGBY.themeName(g.tema)) + ' – settimana 1" data-role="gen-nome">') +
           fld('Data', '<input id="g-data" type="date" value="' + esc(g.data) + '" data-role="gen-data">') +
         '</div>' +
+        fld('N° ragazzi disponibili (facoltativo)', '<input id="g-ragazzi" type="number" min="2" max="60" value="' + esc(g.ragazzi) + '" placeholder="Es. 18" data-role="gen-ragazzi">') +
+        '<p class="muted" style="font-size:.78rem;margin:2px 0 0">Se lo indichi, scelgo gli esercizi più adatti al numero e ti segnalo dove servono piccoli adattamenti per <strong>coinvolgere sempre tutti</strong>.</p>' +
       '</div>' +
       '<div class="card">' +
         '<div class="row between"><strong>Durata delle fasi</strong><button class="btn sm ghost" data-action="gen:reset-min">↺ Default</button></div>' +
@@ -418,10 +470,24 @@
   function pick(arr) { return arr.length ? arr[Math.floor(Math.random() * arr.length)] : null; }
   function slotFrom(e) { return e ? { id: e.id, titolo: e.titolo, tema: e.tema, fase: e.fase } : null; }
 
+  /* Scelta pesata sul numero di ragazzi: preferisce gli esercizi che
+     coinvolgono tutti (o sono adattabili), altrimenti quello più vicino. */
+  function pickForPlayers(cands, n) {
+    if (!n || !cands.length) return pick(cands);
+    var scored = cands.map(function (e) {
+      var f = RUGBY.fitGiocatori(e.giocatori, n);
+      var score = (!f || f.tipo === 'ok' || f.tipo === 'flex') ? 0 : f.diff;
+      return { e: e, score: score };
+    });
+    var best = scored.reduce(function (m, x) { return Math.min(m, x.score); }, Infinity);
+    return pick(scored.filter(function (x) { return x.score === best; }).map(function (x) { return x.e; }));
+  }
+
   function generateSession() {
     var g = state.gen;
+    var n = Number(g.ragazzi) || 0;
     var fasi = g.phases.map(function (p) {
-      var chosen = pick(candidatesForPhase(p, g.tema));
+      var chosen = pickForPlayers(candidatesForPhase(p, g.tema), n);
       return {
         id: p.id, nome: p.nome, minuti: Number(p.minuti) || 0, tematica: p.tematica,
         gruppi: 1, stazioni: [chosen ? [slotFrom(chosen)] : []]
@@ -430,7 +496,7 @@
     return {
       id: uid('sess'),
       nome: g.nome || (RUGBY.themeName(g.tema) + ' – ' + fmtDate(g.data)),
-      data: g.data, tema: g.tema, createdAt: Date.now(), note: '', fasi: fasi
+      data: g.data, tema: g.tema, ragazzi: n || null, createdAt: Date.now(), note: '', fasi: fasi
     };
   }
 
@@ -446,11 +512,13 @@
     function slotHTML(slot, i, gi, j) {
       var ex = getExercise(slot.id);
       var title = ex ? ex.titolo : (slot.titolo + ' (non più in libreria)');
+      var note = fitNoteContent(slot.id, s.fasi[i]);
       return '<div class="slot">' +
         '<div class="s-main">' +
           '<div class="s-title">' + esc(title) + '</div>' +
           '<div class="s-sub"><span class="badge" style="background:' + RUGBY.themeColor(slot.tema) + ';font-size:.66rem">' + esc(RUGBY.themeName(slot.tema)) + '</span>' +
           (ex ? ' · ' + esc(ex.giocatori || '') : '') + '</div>' +
+          '<div class="fit-note ' + note.cls + '" data-ex="' + esc(slot.id) + '" data-f="' + i + '">' + esc(note.text) + '</div>' +
         '</div>' +
         (ex ? '<button class="btn sm ghost no-print" data-action="sess:view-ex" data-id="' + esc(slot.id) + '">👁️</button>' : '') +
         '<button class="btn sm ghost no-print" data-action="sess:swap" data-f="' + i + '" data-g="' + gi + '" data-j="' + j + '">🔁</button>' +
@@ -460,15 +528,20 @@
 
     var phasesHTML = s.fasi.map(function (f, i) {
       var g = f.gruppi || 1;
+      var rot = f.rotazione !== false;
       var perMin = stationMinutes(f);
 
       function stationHTML(arr, gi) {
         var slots = arr.length
           ? arr.map(function (slot, j) { return slotHTML(slot, i, gi, j); }).join('')
           : '<div class="slot empty">Nessun esercizio</div>';
+        var headLabel = rot ? '🔁 Stazione ' + (gi + 1) : '🏉 Gruppo ' + grpLetter(gi);
+        var headMin = (g > 1 && perMin)
+          ? (rot ? (perMin.esatto ? '' : '~') + perMin.val + ' min' : (Number(f.minuti) || 0) + ' min')
+          : '';
         return '<div class="station">' +
-          (g > 1 ? '<div class="station-head"><span>🏉 Gruppo ' + (gi + 1) + '</span>' +
-            '<span class="min">' + (perMin.esatto ? '' : '~') + perMin.val + ' min</span></div>' : '') +
+          (g > 1 ? '<div class="station-head"><span>' + headLabel + '<span class="per-ragazzi" data-f="' + i + '">' + perRagazziText(f) + '</span></span>' +
+            '<span class="min">' + headMin + '</span></div>' : '') +
           slots +
           '<button class="btn sm ghost no-print" data-action="sess:add" data-f="' + i + '" data-g="' + gi + '">➕ Aggiungi</button>' +
         '</div>';
@@ -476,7 +549,16 @@
 
       var body;
       if (g > 1) {
-        body = '<div class="rotation-hint">🔁 Squadra divisa in <strong>' + g + ' gruppi</strong> in parallelo — rotazione ogni ' + (perMin.esatto ? '' : '~') + perMin.val + ' min</div>' +
+        var lettere = [];
+        for (var li = 0; li < g; li++) lettere.push(grpLetter(li));
+        var hint = rot
+          ? '🔁 I gruppi (' + lettere.join(', ') + ') <strong>ruotano su ' + g + ' stazioni</strong>: ogni stazione dura ' + (perMin.esatto ? '' : '~') + perMin.val + ' min e tutti i ragazzi fanno tutti gli esercizi.'
+          : '🧩 ' + g + ' gruppi <strong>in parallelo senza rotazione</strong>: ognuno resta sul proprio lavoro per ' + (Number(f.minuti) || 0) + ' min (es. reparti separati).';
+        body = '<div class="row no-print" style="gap:6px;margin:0 0 8px">' +
+            '<span class="chip ' + (rot ? 'active' : '') + '" data-action="sess:mode" data-f="' + i + '" data-rot="1">🔁 Stazioni in rotazione</span>' +
+            '<span class="chip ' + (!rot ? 'active' : '') + '" data-action="sess:mode" data-f="' + i + '" data-rot="0">🧩 Gruppi separati</span>' +
+          '</div>' +
+          '<div class="rotation-hint">' + hint + '</div>' +
           '<div class="stations g' + Math.min(g, 6) + '">' + f.stazioni.map(stationHTML).join('') + '</div>';
       } else {
         body = stationHTML(f.stazioni[0], 0);
@@ -504,8 +586,9 @@
       '<span class="back-link no-print" data-action="' + (state.sessionIsNew ? 'nav:generate' : 'nav:sessions') + '">← Indietro</span>' +
       '<div class="card">' +
         '<input style="font-size:1.1rem;font-weight:700;border:none;padding:4px 0" value="' + esc(s.nome) + '" data-role="sess-nome">' +
-        '<div class="row" style="margin-top:6px"><span class="badge" style="background:' + RUGBY.themeColor(s.tema) + '">Tema: ' + esc(RUGBY.themeName(s.tema)) + '</span>' +
-          '<span class="badge soft">📅 ' + esc(fmtDate(s.data)) + '</span></div>' +
+        '<div class="row" style="margin-top:6px;align-items:center"><span class="badge" style="background:' + RUGBY.themeColor(s.tema) + '">Tema: ' + esc(RUGBY.themeName(s.tema)) + '</span>' +
+          '<span class="badge soft">📅 ' + esc(fmtDate(s.data)) + '</span>' +
+          '<span class="badge soft ragazzi-badge">👥 <input type="number" min="0" max="60" value="' + (s.ragazzi || '') + '" placeholder="n°" data-role="sess-ragazzi" class="no-print"> ragazzi</span></div>' +
       '</div>' +
       phasesHTML +
       '<div class="total-bar ' + cls + '"><span>Totale seduta</span><strong>' + tot + ' / ' + RUGBY.TARGET_MINUTES + ' min</strong></div>' +
@@ -525,7 +608,9 @@
     var p = state.picker;
     var f = state.session.fasi[p.fIdx];
     var phaseCfg = { id: f.id, tematica: f.tematica };
-    var grpLabel = (f.gruppi || 1) > 1 ? ' · Gruppo ' + (p.gIdx + 1) : '';
+    var grpLabel = (f.gruppi || 1) > 1
+      ? (f.rotazione !== false ? ' · Stazione ' + (p.gIdx + 1) : ' · Gruppo ' + grpLetter(p.gIdx))
+      : '';
     var cands = p.all ? allExercises() : candidatesForPhase(phaseCfg, state.session.tema);
     var listHTML = cands.length ? cands.map(function (e) {
       return '<div class="card click" data-action="pick:choose" data-id="' + esc(e.id) + '">' +
@@ -558,7 +643,7 @@
       return '<div class="card click" data-action="sess:open" data-id="' + esc(s.id) + '">' +
         '<div class="row between"><strong>' + esc(s.nome) + '</strong>' +
           '<span class="badge" style="background:' + RUGBY.themeColor(s.tema) + '">' + esc(RUGBY.themeName(s.tema)) + '</span></div>' +
-        '<div class="ex-meta"><span>📅 ' + esc(fmtDate(s.data)) + '</span><span>⏱️ ' + tot + ' min</span><span>🏉 ' + nEx + ' esercizi</span></div>' +
+        '<div class="ex-meta"><span>📅 ' + esc(fmtDate(s.data)) + '</span><span>⏱️ ' + tot + ' min</span><span>🏉 ' + nEx + ' esercizi</span>' + (s.ragazzi ? '<span>👥 ' + s.ragazzi + '</span>' : '') + '</div>' +
       '</div>';
     }).join('');
     return '<div class="view"><div class="row between"><h2 class="section-title">Le mie sedute</h2>' +
@@ -756,6 +841,11 @@
       case 'sess:delete': deleteSession(id); break;
       case 'sess:print': window.print(); break;
       case 'sess:view-ex': state.detailId = id; state.detailFrom = 'session'; go('detail'); break;
+      case 'sess:mode': {
+        var fm = state.session.fasi[Number(t.getAttribute('data-f'))];
+        fm.rotazione = t.getAttribute('data-rot') === '1';
+        render(); break;
+      }
       case 'sess:add': state.picker = { fIdx: Number(t.getAttribute('data-f')), gIdx: Number(t.getAttribute('data-g')) || 0, mode: 'add', all: false }; render(); break;
       case 'sess:swap': state.picker = { fIdx: Number(t.getAttribute('data-f')), gIdx: Number(t.getAttribute('data-g')) || 0, jIdx: Number(t.getAttribute('data-j')), mode: 'swap', all: false }; render(); break;
       case 'sess:remove': removeSlot(Number(t.getAttribute('data-f')), Number(t.getAttribute('data-g')) || 0, Number(t.getAttribute('data-j'))); break;
@@ -789,10 +879,12 @@
       case 'ex-image': handleImage(t.files && t.files[0]); break;
       case 'gen-nome': state.gen.nome = t.value; break;
       case 'gen-data': state.gen.data = t.value; break;
+      case 'gen-ragazzi': state.gen.ragazzi = t.value; break;
       case 'gen-min': state.gen.phases[idx].minuti = Number(t.value) || 0; updateGenTotal(); break;
       case 'sess-min': state.session.fasi[idx].minuti = Number(t.value) || 0; updateSessTotal(); updateStationMins(idx); break;
       case 'sess-gruppi': setPhaseGroups(idx, Number(t.value) || 1); break;
       case 'sess-nome': state.session.nome = t.value; break;
+      case 'sess-ragazzi': state.session.ragazzi = Number(t.value) || null; updatePlayerFits(); break;
       case 'set-nome': state.phases[idx].nome = t.value; break;
       case 'set-min': state.phases[idx].minuti = Number(t.value) || 0; updateSetTotal(); break;
       case 'set-tema': state.phases[idx].tematica = t.checked; break;
@@ -814,15 +906,21 @@
   function updateStationMins(idx) {
     var f = state.session.fasi[idx];
     if (!f || (f.gruppi || 1) <= 1) return;
+    var rot = f.rotazione !== false;
     var per = stationMinutes(f);
     var phases = document.querySelectorAll('#view-root .phase');
     var ph = phases[idx];
     if (!ph || !per) return;
-    ph.querySelectorAll('.station-head .min').forEach(function (el) {
-      el.textContent = (per.esatto ? '' : '~') + per.val + ' min';
-    });
+    var chipTxt = rot ? (per.esatto ? '' : '~') + per.val + ' min' : (Number(f.minuti) || 0) + ' min';
+    ph.querySelectorAll('.station-head .min').forEach(function (el) { el.textContent = chipTxt; });
     var hint = ph.querySelector('.rotation-hint');
-    if (hint) hint.innerHTML = '🔁 Squadra divisa in <strong>' + f.gruppi + ' gruppi</strong> in parallelo — rotazione ogni ' + (per.esatto ? '' : '~') + per.val + ' min';
+    if (hint) {
+      var lettere = [];
+      for (var li = 0; li < f.gruppi; li++) lettere.push(grpLetter(li));
+      hint.innerHTML = rot
+        ? '🔁 I gruppi (' + lettere.join(', ') + ') <strong>ruotano su ' + f.gruppi + ' stazioni</strong>: ogni stazione dura ' + (per.esatto ? '' : '~') + per.val + ' min e tutti i ragazzi fanno tutti gli esercizi.'
+        : '🧩 ' + f.gruppi + ' gruppi <strong>in parallelo senza rotazione</strong>: ognuno resta sul proprio lavoro per ' + (Number(f.minuti) || 0) + ' min (es. reparti separati).';
+    }
   }
   /* cambia il numero di gruppi di una fase: se diminuisce, gli esercizi
      delle stazioni in eccesso vengono accodati all'ultima stazione rimasta */

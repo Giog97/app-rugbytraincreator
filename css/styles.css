@@ -117,6 +117,10 @@ textarea { min-height: 86px; resize: vertical; }
 .chip.active { background: var(--verde); color: #fff; border-color: var(--verde); }
 .chips { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 6px; -webkit-overflow-scrolling: touch; }
 .chips::-webkit-scrollbar { height: 0; }
+/* su schermi larghi le chips vanno a capo: niente tagli, tutto cliccabile */
+@media (min-width: 680px) {
+  .chips { flex-wrap: wrap; overflow-x: visible; }
+}
 
 /* ===== Esercizio card ===== */
 .ex-card .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
@@ -170,6 +174,20 @@ textarea { min-height: 86px; resize: vertical; }
 }
 .station-head .min { background: var(--verde); color: #fff; border-radius: 999px; padding: 2px 8px; font-size: .7rem; }
 .rotation-hint { font-size: .76rem; color: var(--testo-soft); margin: 2px 0 4px; }
+
+/* Nota di compatibilità col numero di ragazzi disponibili */
+.fit-note { font-size: .72rem; margin-top: 4px; }
+.fit-note:empty { display: none; }
+.fit-note.ok { color: var(--verde-2); font-weight: 600; }
+.fit-note.warn {
+  color: #92400e; background: #fffbeb; border: 1px solid #fde68a;
+  border-radius: 7px; padding: 4px 7px; line-height: 1.35;
+}
+.ragazzi-badge { display: inline-flex; align-items: center; gap: 4px; }
+.ragazzi-badge input {
+  width: 46px; padding: 2px 4px; border: 1px solid var(--bordo); border-radius: 6px;
+  font-weight: 700; font-size: .8rem; text-align: center;
+}
 @media (min-width: 680px) {
   .stations.g2 { grid-template-columns: repeat(2, 1fr); }
   .stations.g3 { grid-template-columns: repeat(3, 1fr); }
